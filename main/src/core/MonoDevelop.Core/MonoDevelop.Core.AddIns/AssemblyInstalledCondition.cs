@@ -1,10 +1,10 @@
 // 
-// PackageInstalledCondition.cs
+// AssemblyInstalledCondition.cs
 //  
 // Author:
-//       Lluis Sanchez Gual <lluis@novell.com>
+//       Piotr Dowgiallo <sparekd@gmail.com>
 // 
-// Copyright (c) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2012 Piotr Dowgiallo
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +26,23 @@
 
 using System;
 using Mono.Addins;
-using MonoDevelop.Core.Assemblies;
-using System.Linq;
 
 namespace MonoDevelop.Core.AddIns
 {
-	public class PackageInstalledCondition: ConditionType
-	{
-		public override bool Evaluate (Mono.Addins.NodeElement conditionNode)
-		{
-			string pname = conditionNode.GetAttribute ("name");
-			SystemPackage pkg = Runtime.SystemAssemblyService.CurrentRuntime.RuntimeAssemblyContext.GetPackageInternal (pname);
-			if (pkg == null)
-				return false;
-			string ver = conditionNode.GetAttribute ("version");
-			if (ver.Length > 0)
-				return ver == pkg.Version;
-			ver = conditionNode.GetAttribute ("minVersion");
-			if (ver.Length > 0)
-				return Addin.CompareVersions (ver, pkg.Version) >= 0;
-			ver = conditionNode.GetAttribute ("maxVersion");
-			if (ver.Length > 0)
-				return Addin.CompareVersions (ver, pkg.Version) <= 0;
-			return true;
-		}
-	}
-	
-	public class PackageNotInstalledCondition: PackageInstalledCondition
-	{
-		public override bool Evaluate (Mono.Addins.NodeElement conditionNode)
-		{
-			return !base.Evaluate (conditionNode);
-		}
-	}
+    public class AssemblyInstalledCondition: ConditionType
+    {
+        public override bool Evaluate(NodeElement conditionNode)
+        {
+            string[] assemblies = conditionNode.GetAttribute("required").Split(';');
+            foreach (var asm in assemblies)
+            {
+                string name = Runtime.SystemAssemblyService.CurrentRuntime.RuntimeAssemblyContext
+                                     .GetAssemblyFullName(asm.Trim(), null);
+                if (name == null)
+                    return false;
+            }
+            return true;
+        }
+    }
 }
+
