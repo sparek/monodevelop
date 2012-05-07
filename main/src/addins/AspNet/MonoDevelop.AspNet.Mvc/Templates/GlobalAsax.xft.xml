@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Template Originator="Michael Hutchinson"
           Created="2009/02/20"
-          LastModified="2009/02/20">
+          LastModified="2012/05/07">
 
 	<!-- Template Header -->
 	<TemplateConfiguration>
@@ -49,9 +49,16 @@ namespace ${Namespace}
             );
 
         }
+        
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new HandleErrorAttribute());
+        }
 
         protected void Application_Start()
         {
+            AreaRegistration.RegisterAllAreas();
+            RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
     }
