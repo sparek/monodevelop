@@ -137,6 +137,7 @@ namespace MonoDevelop.CSharp.Completion
 			if (parsedDocument != null) {
 				this.Unit = parsedDocument.GetAst<CompilationUnit> ();
 				this.CSharpParsedFile = parsedDocument.ParsedFile as CSharpParsedFile;
+				HandleDocumentParsed (null, null);
 			}
 			
 			Document.DocumentParsed += HandleDocumentParsed; 
